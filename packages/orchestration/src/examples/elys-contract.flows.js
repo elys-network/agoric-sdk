@@ -66,7 +66,7 @@ export const makeICAHookAccounts = async (
   const localAccountAddress = localAccount.getAddress();
 
   // stride ICA account
-  const stride = await orch.getChain('stride');
+  const stride = await orch.getChain('stridelocal');
   const { chainId: strideChainId, bech32Prefix: strideBech32Prefix } =
     await stride.getChainInfo();
   const strideICAAccount = await stride.makeAccount();
