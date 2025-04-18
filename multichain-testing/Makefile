@@ -158,4 +158,4 @@ stride-host-zone:
 		strided q gov proposal $$PROPOSAL_ID --output json | jq '.'
 
 .PHONY: start
-start: install wait-for-pods port-forward fund-provision-pool override-chain-registry register-bank-assets stride-host-zone
+start: install wait-for-pods port-forward fund-provision-pool override-chain-registry register-bank-assets #stride-host-zone
