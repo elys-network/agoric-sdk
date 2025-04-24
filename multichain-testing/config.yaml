@@ -97,17 +97,8 @@ chains:
       cpu: 1
       memory: 3Gi
   - id: stridelocal
-    name: custom
+    name: stride
     image: ghcr.io/cosmology-tech/starship/stride:v9.2.1
-    home: /root/.stride
-    binary: strided
-    prefix: stride
-    denom: ustrd
-    prettyName: Stride
-    coins: 100000000000000ustrd
-    hdPath: m/44'/118'/0'/0/0
-    coinType: 118
-    repo: https://github.com/Stride-Labs/stride
     numValidators: 1
     genesis:
       app_state:
@@ -147,8 +138,6 @@ chains:
         symbol: stATOM
         logo_URIs:
           png: "https://raw.githubusercontent.com/cosmos/chain-registry/master/stride/images/statom.png"
-          svg: "https://raw.githubusercontent.com/cosmos/chain-registry/master/stride/images/statom.svg"
-        coingecko_id: stride-staked-atom
         denom_units:
           - denom: stuatom
             exponent: 0
