@@ -2,12 +2,12 @@
   "messages": [
     {
       "@type": "/stride.stakeibc.MsgRegisterHostZone",
-      "connection_id": "connection-0",
+      "connection_id": "connection-1",
       "bech32prefix": "cosmos",
       "host_denom": "uatom",
-      "ibc_denom": "ibc/27394FB092D2ECCD56123C74F36E4C1F926001CEADA9CA97EA622B25F41E5EB2",
+      "ibc_denom": "ibc/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9",
       "creator": "stride10d07y265gmmuvt4z0w9aw880jnsr700jefnezl",
-      "transfer_channel_id": "channel-0",
+      "transfer_channel_id": "channel-1",
       "unbonding_frequency": "1000",
       "min_redemption_rate": "0",
       "max_redemption_rate": "50"

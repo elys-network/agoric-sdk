@@ -98,6 +98,7 @@ chains:
       memory: 3Gi
   - id: stridelocal
     name: stride
+    image: ghcr.io/cosmology-tech/starship/stride:v9.2.1
     numValidators: 1
     genesis:
       app_state:

@@ -66,7 +66,7 @@ export const makeICAHookAccounts = async (
   const localAccountAddress = localAccount.getAddress();
 
   // stride ICA account
-  const stride = await orch.getChain('stride');
+  const stride = await orch.getChain('stridelocal');
   const { chainId: strideChainId, bech32Prefix: strideBech32Prefix } =
     await stride.getChainInfo();
   const strideICAAccount = await stride.makeAccount();
@@ -215,7 +215,7 @@ export const tokenMovementAndStrideLSDFlow = async (
     JSON.parse(atob(incomingIbcTransferEvent.packet.data))
   );
 
-  trace('Received Fungible Token Packet Data', tx);
+  trace('ElysFlow: Received Fungible Token Packet Data', tx);
 
   // ignore the outgoing transfers
   if (tx.receiver !== localAccountAddress.value) {
@@ -259,9 +259,10 @@ export const tokenMovementAndStrideLSDFlow = async (
     try {
       incomingTokenAmount = BigInt(tx.amount);
     } catch (error) {
-      trace('Error converting tx.amount to BigInt', error);
+      trace('ElysFlow: Error converting tx.amount to BigInt', error);
       return;
     }
+    trace('ElysFlow: Converted tx.amount to BigInt', tx.amount);
 
     let amountAfterFeeDeduction;
     // deduct fees
@@ -273,9 +274,9 @@ export const tokenMovementAndStrideLSDFlow = async (
         incomingTokenIBCDenom,
         true,
       );
-      trace('amount after fee deduction', amountAfterFeeDeduction);
+      trace('ElysFlow: Amount after fee deduction', amountAfterFeeDeduction);
     } catch (error) {
-      trace('Error deducting fees', error);
+      trace('ElysFlow: Error deducting fees', error);
       return;
     }
 
@@ -293,10 +294,11 @@ export const tokenMovementAndStrideLSDFlow = async (
         senderAgoricChainAddress,
         hostChainInfo.ibcDenomOnAgoric,
         amountAfterFeeDeduction,
-        'Moving tokens from agoric to host-chain failed, sending it to users wallet on agoric chain',
+        'ElysFlow: Moving tokens from agoric to host-chain failed, sending it to users wallet on agoric chain',
       );
       return;
     }
+    trace('ElysFlow: Moved tokens from agoric to host-chain address :', hostChainInfo.hostICAAccountAddress);
     // Move to stride ICA from host ICA account
     const senderHostChainAddress = {
       chainId: hostChainInfo.hostICAAccountAddress.chainId,
@@ -304,7 +306,7 @@ export const tokenMovementAndStrideLSDFlow = async (
       value: tx.sender,
     };
     try {
-      trace('Moving tokens to stride from host-chain');
+      trace('ElysFlow: Moving tokens to stride from host-chain');
       await hostChainInfo.hostICAAccount.transfer(strideICAAddress, {
         denom: tx.denom,
         value: amountAfterFeeDeduction,
@@ -315,10 +317,11 @@ export const tokenMovementAndStrideLSDFlow = async (
         senderHostChainAddress,
         tx.denom,
         amountAfterFeeDeduction,
-        'Moving tokens to stride from host-chain failed, sending it to users wallet on host chain',
+        'ElysFlow: Moving tokens to stride from host-chain failed, sending it to users wallet on host chain',
       );
       return;
     }
+    trace('ElysFlow: Moved tokens from host-chain to Stride address :', strideICAAddress);
     // Liquid stake on stride chain
     /** @type {MsgLiquidStakeResponse} */
     let stakingResponse;
@@ -335,10 +338,11 @@ export const tokenMovementAndStrideLSDFlow = async (
         senderStrideChainAddress,
         hostChainInfo.ibcDenomOnStride,
         amountAfterFeeDeduction,
-        'Liquid staking failed, sending tokens to users wallet on stride chain',
+        'ElysFlow: Liquid staking failed, sending tokens to users wallet on stride chain',
       );
       return;
     }
+    trace('ElysFlow: Liquid Staking Response :', stakingResponse);
     // Move stTokens to Elys chain
     try {
       await moveStTokensToElys(
@@ -352,7 +356,7 @@ export const tokenMovementAndStrideLSDFlow = async (
         senderStrideChainAddress,
         stakingResponse.stToken.denom,
         BigInt(stakingResponse.stToken.amount),
-        'Moving stTokens to elys from stride chain failed, sending it to users wallet on stride chain',
+        'ElysFlow: Moving stTokens to elys from stride chain failed, sending it to users wallet on stride chain',
       );
     }
   } else {
@@ -366,13 +370,13 @@ export const tokenMovementAndStrideLSDFlow = async (
     try {
       incomingStTokenAmount = BigInt(tx.amount);
     } catch (error) {
-      trace('Error converting tx.amount to BigInt', error);
+      trace('ElysFlow: Error converting tx.amount to BigInt', error);
       return;
     }
 
     const ibcDenomOnAgoricFromElys = `ibc/${denomHash({ denom: `st${tx.denom}`, channelId: AgoricToElysChannel })}`;
-    trace(`LiquidStakeRedeem: Received ${tx.denom}`);
-    trace(`LiquidStakeRedeem: Moving ${ibcDenomOnAgoricFromElys} to elys ICA`);
+    trace(`ElysFlow: LiquidStakeRedeem: Received ${tx.denom}`);
+    trace(`ElysFlow: LiquidStakeRedeem: Moving ${ibcDenomOnAgoricFromElys} to elys ICA`);
 
     let amountAfterFeeDeduction;
     // deduct fees
@@ -384,9 +388,9 @@ export const tokenMovementAndStrideLSDFlow = async (
         ibcDenomOnAgoricFromElys,
         false,
       );
-      trace('amount after fee deduction', amountAfterFeeDeduction);
+      trace('ElysFlow: Amount after fee deduction', amountAfterFeeDeduction);
     } catch (error) {
-      trace('Error deducting fees', error);
+      trace('ElysFlow: Error deducting fees', error);
       return;
     }
 
@@ -402,7 +406,7 @@ export const tokenMovementAndStrideLSDFlow = async (
         senderAgoricChainAddress,
         ibcDenomOnAgoricFromElys,
         amountAfterFeeDeduction,
-        'Moving stTokens to elys ICA from agoric chain failed, sending it to users wallet on agoric chain',
+        'ElysFlow: Moving stTokens to elys ICA from agoric chain failed, sending it to users wallet on agoric chain',
       );
       return;
     }
@@ -418,7 +422,7 @@ export const tokenMovementAndStrideLSDFlow = async (
         senderElysChainAddress,
         tx.denom,
         amountAfterFeeDeduction,
-        'Moving stTokens to stride ICA from elys ICA failed, sending it to users wallet on elys chain',
+        'ElysFlow: Moving stTokens to stride ICA from elys ICA failed, sending it to users wallet on elys chain',
       );
       return;
     }
@@ -429,7 +433,7 @@ export const tokenMovementAndStrideLSDFlow = async (
         hostChain.bech32Prefix,
       );
       trace(
-        `Derived Native address from elys address ${tx.sender} is ${senderNativeAddress}`,
+        `ElysFlow: Derived Native address from elys address ${tx.sender} is ${senderNativeAddress}`,
       );
 
       await redeemOnStride(
@@ -445,7 +449,7 @@ export const tokenMovementAndStrideLSDFlow = async (
         senderStrideChainAddress,
         `st${hostChain.nativeDenom}`,
         amountAfterFeeDeduction,
-        'Unstaking on stride failed, sending it to users wallet on stride chain',
+        'ElysFlow: Unstaking on stride failed, sending it to users wallet on stride chain',
       );
     }
   }
@@ -482,7 +486,7 @@ const handleTransferFailure = async (
     await account.send(address, { denom, value: amount });
   } catch (error) {
     trace(
-      `Failed to send tokens to ${address.value}, denom: ${denom}, amount: ${amount}`,
+      `ElysFlow: Failed to send tokens to ${address.value}, denom: ${denom}, amount: ${amount}`,
       error,
     );
   }
@@ -500,7 +504,7 @@ const moveToHostChain = async (
   ibcDenomOnAgoric,
   amount,
 ) => {
-  trace('Moving funds to host-chain');
+  trace('ElysFlow: Moving funds to host-chain');
   trace('hostICAAddress ', hostICAAccountAddress);
   trace('ibcDenomOnAgoric ', ibcDenomOnAgoric);
   trace('amount', amount);
@@ -509,7 +513,7 @@ const moveToHostChain = async (
     denom: ibcDenomOnAgoric,
     value: amount,
   });
-  trace('funds moved to host-chain, ', hostICAAccountAddress.chainId);
+  trace('ElysFlow: Funds moved to host-chain, ', hostICAAccountAddress.chainId);
 };
 harden(moveToHostChain);
 /**
@@ -533,7 +537,7 @@ const liquidStakeOnStride = async (
     }),
   );
 
-  trace('Calling liquid stake');
+  trace('ElysFlow: Calling liquid stake');
   const stakingResponse = await strideICAAccount.executeEncodedTx([
     strideLiquidStakeMsg,
   ]);
@@ -553,7 +557,7 @@ const moveStTokensToElys = async (
   senderElysChainAddress,
   stToken,
 ) => {
-  trace('Moving stTokens to elys from stride');
+  trace('ElysFlow: Moving stTokens to elys from stride');
   await strideICAAccount.transfer(senderElysChainAddress, {
     denom: stToken.denom,
     value: BigInt(stToken.amount),
@@ -620,7 +624,7 @@ const deductedFeeAmount = async (
 
   const finalAmount = amount - feeAmount;
   if (finalAmount < 0) {
-    throw Fail`Fee is more than the amount`;
+    throw Fail`ElysFlow: Fee is more than the amount`;
   }
 
   const feeReceiverChainAddress = {
@@ -629,11 +633,11 @@ const deductedFeeAmount = async (
     value: feeConfig.feeCollector,
   };
 
-  trace(`sending fee amount ${feeAmount} to ${feeConfig.feeCollector}`);
+  trace(`ElysFlow: Sending fee amount ${feeAmount} to ${feeConfig.feeCollector}`);
   await account.send(feeReceiverChainAddress, {
     denom,
     value: feeAmount,
   });
-  trace('fee sent to fee collector');
+  trace('ElysFlow: Fee sent to fee collector');
   return harden(finalAmount);
 };
