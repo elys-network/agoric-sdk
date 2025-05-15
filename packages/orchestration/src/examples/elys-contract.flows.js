@@ -81,10 +81,6 @@ export const makeICAHookAccounts = async (
   const elys = await orch.getChain('elys');
   const { chainId: elysChainId, bech32Prefix: elysBech32Prefix } =
     await elys.getChainInfo();
-  trace('Creating Elys ICA account...');
-
-  const elysICAAccount = await elys.makeAccount();
-  const elysICAAddress = elysICAAccount.getAddress();
 
   const { transferChannel: transferChannelAgoricElys } =
     await chainHub.getConnectionInfo(agoricChainId, elysChainId);
@@ -139,6 +135,18 @@ export const makeICAHookAccounts = async (
       transferChannel.counterPartyChannelId,
       hostChainInfo,
     );
+  }
+
+  let elysICAAccount;
+  let elysICAAddress;
+  try {
+    trace('Creating Elys ICA account...');
+     elysICAAccount = await elys.makeAccount();
+     elysICAAddress = elysICAAccount.getAddress();
+    trace('Elys ICA created:', elysICAAddress);
+  } catch (err) {
+    trace('Failed to create Elys ICA account:', err);
+    throw err;
   }
 
   /** @type {StrideStakingTapState & Passable} */
@@ -647,14 +655,14 @@ const deductedFeeAmount = async (
   return harden(finalAmount);
 };
 
-
 /**
  * Splits a string into two halves at the first occurrence of '1'.
+ *
  * @param {string} input
  * @returns {Bech32Address}
  */
 const convertToBech32Address = input => {
   const index = input.indexOf('1');
-  return `${input.slice(0, index)}1${input.slice(index + 1)}` 
+  return `${input.slice(0, index)}1${input.slice(index + 1)}`;
 };
 harden(convertToBech32Address);
