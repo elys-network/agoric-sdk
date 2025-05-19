@@ -63,30 +63,66 @@ export const makeICAHookAccounts = async (
   const agoric = await orch.getChain('agoric');
   const { chainId: agoricChainId, bech32Prefix: agoricBech32Prefix } =
     await agoric.getChainInfo();
-  trace('Creating local agoic account...');
+  trace('Creating local Agoric account...');
   const localAccount = await agoric.makeAccount();
   const localAccountAddress = localAccount.getAddress();
-
-  trace('Fetching Stride chainInfo...');
-  // stride ICA account
-  const stride = await orch.getChain('stride');
-  const { chainId: strideChainId, bech32Prefix: strideBech32Prefix } =
-    await stride.getChainInfo();
-  trace('Creating stride ICA account...');
-  const strideICAAccount = await stride.makeAccount();
-  const strideICAAddress = strideICAAccount.getAddress();
+  trace('Agoric local account Address: ', localAccountAddress);
 
   trace('Fetching Elys chainInfo...');
   // Elys ICA account
   const elys = await orch.getChain('elys');
   const { chainId: elysChainId, bech32Prefix: elysBech32Prefix } =
     await elys.getChainInfo();
+  trace(`Elys chainId: ${elysChainId}`);  
+    let elysICAAccount;
+  let elysICAAddress;
+  try {
+    trace('Creating Elys account on Elys...');
+     elysICAAccount = await elys.makeAccount();
+     elysICAAddress = elysICAAccount.getAddress();
+    trace('Elys ICA created:', elysICAAddress);
+  } catch (err) {
+    trace('Failed to create Elys ICA account:', err);
+    throw err;
+  }
+
+  trace('Fetching Stride chainInfo...');
+  // stride ICA account
+  const stride = await orch.getChain('stride');
+  const { chainId: strideChainId, bech32Prefix: strideBech32Prefix } =
+    await stride.getChainInfo();
+  trace('Creating stride ICA account on Stride...');
+  const strideICAAccount = await stride.makeAccount();
+  const strideICAAddress = strideICAAccount.getAddress();
+  trace('Stride ICA Account Address: ', strideICAAddress.value);
+
+  
 
   const { transferChannel: transferChannelAgoricElys } =
     await chainHub.getConnectionInfo(agoricChainId, elysChainId);
   const { transferChannel: transferChannelStrideElys } =
     await chainHub.getConnectionInfo(strideChainId, elysChainId);
 
+  trace('StrideElys channelId: ', transferChannelStrideElys.channelId);
+  trace('AgoricElys channelId: ', transferChannelAgoricElys.channelId);
+
+  trace('.....................................................................................................................................................................Dummy trace.........................................................');
+  //TEST From Agoric local account transfer 1bld to elys1j3ut8walawveh8j0en2alyed983rfqqlef8600
+  // const testReceiverAddress = {
+  //   chainId: elysChainId,
+  //   encoding: localAccountAddress.encoding,
+  //   /** @type {`${string}1${string}`} */
+  //   value: 'elys1j3ut8walawveh8j0en2alyed983rfqqlef8600',
+  // };
+  // localAccount.transfer(testReceiverAddress, {
+  //       denom: 'ubld',
+  //       value: 100000n,
+  //     });
+
+  localAccount.getBalances().then(balances => {
+    trace('Local account balances: ', balances);
+  });
+  
   trace('Connecting with all supported chanins...');
   // ICA account on all the supported host chains
   for (const [_index, remoteChain] of allRemoteChains.entries()) {
@@ -102,6 +138,7 @@ export const makeICAHookAccounts = async (
 
     const ICAAccount = await remoteChain.makeAccount();
     const ICAAddress = ICAAccount.getAddress();
+    trace('Remote Chain ICA Account Address: ', ICAAddress.value);
 
     // get the connection info between agoric and remote chain
     const { transferChannel } = await chainHub.getConnectionInfo(
@@ -137,17 +174,6 @@ export const makeICAHookAccounts = async (
     );
   }
 
-  let elysICAAccount;
-  let elysICAAddress;
-  try {
-    trace('Creating Elys ICA account...');
-     elysICAAccount = await elys.makeAccount();
-     elysICAAddress = elysICAAccount.getAddress();
-    trace('Elys ICA created:', elysICAAddress);
-  } catch (err) {
-    trace('Failed to create Elys ICA account:', err);
-    throw err;
-  }
 
   /** @type {StrideStakingTapState & Passable} */
   const s = {

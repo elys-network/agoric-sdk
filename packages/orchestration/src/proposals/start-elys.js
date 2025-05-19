@@ -90,8 +90,11 @@ export const startElys = async (
   };
 
   const { instance, creatorFacet } = await E(startUpgradable)(startOpts);
+  trace('elys instance created');
   const addressNode = await E(storageNode).makeChildNode('address');
+  trace('elys address node created');
   const address = await E(creatorFacet).getLocalAddress();
+  trace('elys address fetched', address);
   await E(addressNode).setValue( JSON.stringify(address) );
 
   produceInstance.resolve(instance);
