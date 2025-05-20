@@ -145,10 +145,15 @@ export const makeICAHookAccounts = async (
       chainId,
     );
     const { transferChannel: transferChannelhostStride } =
-      await chainHub.getConnectionInfo(chainId, strideChainId);
+      await chainHub.getConnectionInfo(strideChainId, chainId);
 
     const ibcDenomOnAgoric = `ibc/${denomHash({ denom: nativeDenom, channelId: transferChannel.channelId })}`;
     const ibcDenomOnStride = `ibc/${denomHash({ denom: nativeDenom, channelId: transferChannelhostStride.channelId })}`;
+
+    trace('ibcDenomOnAgoric ', ibcDenomOnAgoric);
+    trace('nativeDenom ', nativeDenom);
+    trace('ibcDenomOnStride ', ibcDenomOnStride);
+
 
     // Required in retrieving native token back from stTokens on elys chain
     const stTokenDenomOnElys = `ibc/${denomHash({ denom: `st${nativeDenom}`, channelId: transferChannelStrideElys.channelId })}`;
