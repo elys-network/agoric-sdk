@@ -356,6 +356,7 @@ export const tokenMovementAndStrideLSDFlow = async (
         denom: tx.denom,
         value: amountAfterFeeDeduction,
       });
+      trace('Moved tokens to stride ICA account');
     } catch (error) {
       await handleTransferFailure(
         hostChainInfo.hostICAAccount,
@@ -527,6 +528,7 @@ const handleTransferFailure = async (
 
   try {
     await account.send(address, { denom, value: amount });
+    trace(`Sent tokens to ${address.value}, denom: ${denom}, amount: ${amount}`);
   } catch (error) {
     trace(
       `Failed to send tokens to ${address.value}, denom: ${denom}, amount: ${amount}`,
