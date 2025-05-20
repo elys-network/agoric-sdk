@@ -106,7 +106,6 @@ export const makeICAHookAccounts = async (
   trace('StrideElys channelId: ', transferChannelStrideElys.channelId);
   trace('AgoricElys channelId: ', transferChannelAgoricElys.channelId);
 
-  trace('.....................................................................................................................................................................Dummy trace.........................................................');
   //TEST From Agoric local account transfer 1bld to elys1j3ut8walawveh8j0en2alyed983rfqqlef8600
   // const testReceiverAddress = {
   //   chainId: elysChainId,

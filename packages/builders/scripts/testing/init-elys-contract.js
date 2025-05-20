@@ -9,10 +9,7 @@ import {
   getManifest,
   startElys,
 } from '@agoric/orchestration/src/proposals/start-elys.js';
-// import { minimalChainInfos } from '../tools/chainInfo.js';
-// import { minimalChainInfos } from '../../../boot/test/tools/chainInfo.js';
-// import { assetOn } from '@agoric/orchestration/src/utils/asset.js';
-// import { parseArgs } from 'node:util';
+
 
 /**
  * @import {ParseArgsConfig} from 'node:util'
@@ -135,6 +132,14 @@ export default async (homeP, endowments) => {
       {
         baseDenom: 'ibc/EF3BDB6C8222A465BF8EC6B02EBE350E82DC0AC4FDB75286A92B8433A3B026EC',
         baseName: 'elys',
+        chainName: 'agoric',
+      },
+    ],
+    [
+      'ibc/F00782820450D9F76025F7FC25BF026EC11309069CE89C1CD326311033E17E3E',
+      {
+        baseDenom: 'uatom',
+        baseName: 'cosmoshub',
         chainName: 'agoric',
       },
     ],
