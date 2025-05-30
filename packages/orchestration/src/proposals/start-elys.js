@@ -65,7 +65,7 @@ export const startElys = async (
       denominator: BigInt(100),
     }, // 10%
   };
-  const allowedChains = ['cosmoshub'];
+  const allowedChains = ['cosmoshub', 'celestia'];
 
   /** @type {StartUpgradableOpts<ElysContract>} */
   const startOpts = {
