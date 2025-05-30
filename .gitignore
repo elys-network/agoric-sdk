@@ -84,3 +84,5 @@ endo-sha.txt
 .aider*
 !.aiderignore
 
+packages/builders/scripts/testing/startElys-plan.json
+packages/builders/scripts/testing/startElys.js

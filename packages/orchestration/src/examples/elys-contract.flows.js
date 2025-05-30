@@ -5,11 +5,16 @@ import {
   encodeBech32,
 } from '@agoric/cosmic-proto/address-hooks.js';
 import { Any } from '@agoric/cosmic-proto/google/protobuf/any.js';
+// import {
+//   MsgLiquidStake,
+//   MsgLiquidStakeResponse,
+//   MsgRedeemStake,
+// } from '@agoric/cosmic-proto/stride/stakeibc/tx.js';
 import {
   MsgLiquidStake,
   MsgLiquidStakeResponse,
   MsgRedeemStake,
-} from '@agoric/cosmic-proto/stride/stakeibc/tx.js';
+} from '@agoric/cosmic-proto/stride/staketia/tx.js';
 import { tryDecodeResponse } from '../utils/cosmos.js';
 import { denomHash, denomHashFromPath } from '../utils/denomHash.js';
 
@@ -624,9 +629,9 @@ const liquidStakeOnStride = async (
 
   const strideLiquidStakeMsg = Any.toJSON(
     MsgLiquidStake.toProtoMsg({
-      creator: strideICAAddress.value,
-      amount: amount.toString(),
-      hostDenom: denom,
+      staker: strideICAAddress.value,
+      nativeAmount: amount.toString(),
+      // hostDenom: denom,
     }),
   );
 
@@ -703,9 +708,9 @@ const redeemOnStride = async (
 
   const strideRedeemStakeMsg = Any.toJSON(
     MsgRedeemStake.toProtoMsg({
-      creator: strideICAAddress.value,
-      amount,
-      hostZone,
+      redeemer: strideICAAddress.value,
+      stTokenAmount: amount,
+      // hostZone,
       receiver,
     }),
   );
@@ -713,8 +718,8 @@ const redeemOnStride = async (
   // https://github.com/Agoric/agoric-sdk/wiki/No-Nested-Await
   await null;
 
-  await strideICAAccount.executeEncodedTx([strideRedeemStakeMsg]);
-  trace('Redeem stake on stride executed successfully');
+  const redeemResponse = await strideICAAccount.executeEncodedTx([strideRedeemStakeMsg]);
+  trace(`Redeem stake on stride executed successfully ${redeemResponse}`);
 };
 harden(redeemOnStride);
 
