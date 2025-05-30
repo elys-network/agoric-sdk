@@ -5,13 +5,18 @@ import {
   encodeBech32,
 } from '@agoric/cosmic-proto/address-hooks.js';
 import { Any } from '@agoric/cosmic-proto/google/protobuf/any.js';
+// import {
+//   MsgLiquidStake,
+//   MsgLiquidStakeResponse,
+//   MsgRedeemStake,
+// } from '@agoric/cosmic-proto/stride/stakeibc/tx.js';
 import {
   MsgLiquidStake,
   MsgLiquidStakeResponse,
   MsgRedeemStake,
-} from '@agoric/cosmic-proto/stride/stakeibc/tx.js';
+} from '@agoric/cosmic-proto/stride/staketia/tx.js';
 import { tryDecodeResponse } from '../utils/cosmos.js';
-import { denomHash } from '../utils/denomHash.js';
+import { denomHash, denomHashFromPath } from '../utils/denomHash.js';
 
 /**
  * @import {GuestInterface} from '@agoric/async-flow';
@@ -63,33 +68,65 @@ export const makeICAHookAccounts = async (
   const agoric = await orch.getChain('agoric');
   const { chainId: agoricChainId, bech32Prefix: agoricBech32Prefix } =
     await agoric.getChainInfo();
-  trace('Creating local agoic account...');
+  trace('Creating local Agoric account...');
   const localAccount = await agoric.makeAccount();
   const localAccountAddress = localAccount.getAddress();
-
-  trace('Fetching Stride chainInfo...');
-  // stride ICA account
-  const stride = await orch.getChain('stride');
-  const { chainId: strideChainId, bech32Prefix: strideBech32Prefix } =
-    await stride.getChainInfo();
-  trace('Creating stride ICA account...');
-  const strideICAAccount = await stride.makeAccount();
-  const strideICAAddress = strideICAAccount.getAddress();
+  trace('Agoric local account Address: ', localAccountAddress);
 
   trace('Fetching Elys chainInfo...');
   // Elys ICA account
   const elys = await orch.getChain('elys');
   const { chainId: elysChainId, bech32Prefix: elysBech32Prefix } =
     await elys.getChainInfo();
-  trace('Creating Elys ICA account...');
+  trace(`Elys chainId: ${elysChainId}`);
+  let elysICAAccount;
+  let elysICAAddress;
+  try {
+    trace('Creating Elys account on Elys...');
+    elysICAAccount = await elys.makeAccount();
+    elysICAAddress = elysICAAccount.getAddress();
+    trace('Elys ICA created:', elysICAAddress);
+  } catch (err) {
+    trace('Failed to create Elys ICA account:', err);
+    throw err;
+  }
 
-  const elysICAAccount = await elys.makeAccount();
-  const elysICAAddress = elysICAAccount.getAddress();
+  trace('Fetching Stride chainInfo...');
+  // stride ICA account
+  const stride = await orch.getChain('stride');
+  const { chainId: strideChainId, bech32Prefix: strideBech32Prefix } =
+    await stride.getChainInfo();
+  trace('Creating ICA account on Stride...');
+  const strideICAAccount = await stride.makeAccount();
+  const strideICAAddress = strideICAAccount.getAddress();
+  trace(
+    '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++Stride ICA Account Address: ',
+    strideICAAddress.value,
+  );
 
   const { transferChannel: transferChannelAgoricElys } =
     await chainHub.getConnectionInfo(agoricChainId, elysChainId);
   const { transferChannel: transferChannelStrideElys } =
     await chainHub.getConnectionInfo(strideChainId, elysChainId);
+
+  trace('StrideElys channelId: ', transferChannelStrideElys.channelId);
+  trace('AgoricElys channelId: ', transferChannelAgoricElys.channelId);
+
+  //TEST From Agoric local account transfer 1bld to elys1j3ut8walawveh8j0en2alyed983rfqqlef8600
+  // const testReceiverAddress = {
+  //   chainId: elysChainId,
+  //   encoding: localAccountAddress.encoding,
+  //   /** @type {`${string}1${string}`} */
+  //   value: 'elys1j3ut8walawveh8j0en2alyed983rfqqlef8600',
+  // };
+  // localAccount.transfer(testReceiverAddress, {
+  //       denom: 'ubld',
+  //       value: 100000n,
+  //     });
+
+  localAccount.getBalances().then(balances => {
+    trace('Local account balances: ', balances);
+  });
 
   trace('Connecting with all supported chanins...');
   // ICA account on all the supported host chains
@@ -106,6 +143,7 @@ export const makeICAHookAccounts = async (
 
     const ICAAccount = await remoteChain.makeAccount();
     const ICAAddress = ICAAccount.getAddress();
+    trace('Remote Chain ICA Account Address: ', ICAAddress.value);
 
     // get the connection info between agoric and remote chain
     const { transferChannel } = await chainHub.getConnectionInfo(
@@ -113,17 +151,32 @@ export const makeICAHookAccounts = async (
       chainId,
     );
     const { transferChannel: transferChannelhostStride } =
-      await chainHub.getConnectionInfo(chainId, strideChainId);
+      await chainHub.getConnectionInfo(strideChainId, chainId);
 
     const ibcDenomOnAgoric = `ibc/${denomHash({ denom: nativeDenom, channelId: transferChannel.channelId })}`;
     const ibcDenomOnStride = `ibc/${denomHash({ denom: nativeDenom, channelId: transferChannelhostStride.channelId })}`;
 
+    trace('ibcDenomOnAgoric ', ibcDenomOnAgoric);
+    trace('nativeDenom ', nativeDenom);
+    trace('ibcDenomOnStride ', ibcDenomOnStride);
+
     // Required in retrieving native token back from stTokens on elys chain
-    const stTokenDenomOnElys = `ibc/${denomHash({ denom: `st${nativeDenom}`, channelId: transferChannelStrideElys.channelId })}`;
-    stDenomOnElysTohostToAgoricChannelMap.init(
-      stTokenDenomOnElys,
-      transferChannel.counterPartyChannelId,
-    );
+    let stTokenDenomOnElys = `ibc/${denomHash({ denom: `st${nativeDenom}`, channelId: transferChannelStrideElys.counterPartyChannelId })}`;
+    stTokenDenomOnElys = `transfer/${transferChannelStrideElys.counterPartyChannelId}/st${nativeDenom}`;
+    trace('stTokenDenomOnElys ', stTokenDenomOnElys);
+    //TODO: remove hardcoded value used here for debugging
+
+    try {
+      stDenomOnElysTohostToAgoricChannelMap.init(
+        stTokenDenomOnElys,
+        transferChannel.counterPartyChannelId,
+      );
+    } catch (error) {
+      trace(
+        `Error initializing stDenomOnElysTohostToAgoricChannelMap for ${stTokenDenomOnElys}:`,
+        error,
+      );
+    }
 
     /** @type {SupportedHostChainShape} */
     const hostChainInfo = {
@@ -164,6 +217,7 @@ export const makeICAHookAccounts = async (
   // @ts-expect-error tap.receiveUpcall: 'Vow<void> | undefined' not assignable to 'Promise<any>'
   await localAccount.monitorTransfers(tap);
 
+  trace('Done with makeICAHookAccounts++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
   return localAccount;
 };
 harden(makeICAHookAccounts);
@@ -208,11 +262,20 @@ export const tokenMovementAndStrideLSDFlow = async (
   elysBech32Prefix,
   feeConfig,
 ) => {
+  trace(
+    'tokenMovementAndStrideLSDFlow called with event:',
+    incomingIbcTransferEvent,
+  );
   // Look for interested incoming tokens
   // Either supported chains Staking denoms or stTokens from elys chain
   const stakeToStride = supportedHostChains.has(
     incomingIbcTransferEvent.packet.source_channel,
   );
+  trace(`stakeToStride: ${stakeToStride}`);
+  trace(
+    `packet source channel: ${incomingIbcTransferEvent.packet.source_channel}`,
+  );
+
   const redeemFromStride =
     incomingIbcTransferEvent.packet.source_channel === elysToAgoricChannel;
   if (!stakeToStride && !redeemFromStride) {
@@ -233,6 +296,10 @@ export const tokenMovementAndStrideLSDFlow = async (
   const senderAgoricAddress = deriveAddress(tx.sender, agoricBech32Prefix);
   const senderStrideAddress = deriveAddress(tx.sender, strideBech32Prefix);
   const senderElysAddress = deriveAddress(tx.sender, elysBech32Prefix);
+
+  trace('senderAgoricAddress: ', senderAgoricAddress);
+  trace('senderStrideAddress: ', senderStrideAddress);
+  trace('senderElysAddress: ', senderElysAddress);
 
   const senderAgoricChainAddress = {
     chainId: localAccountAddress.chainId,
@@ -318,6 +385,7 @@ export const tokenMovementAndStrideLSDFlow = async (
         denom: tx.denom,
         value: amountAfterFeeDeduction,
       });
+      trace('Moved tokens to stride ICA account');
     } catch (error) {
       await handleTransferFailure(
         hostChainInfo.hostICAAccount,
@@ -364,13 +432,20 @@ export const tokenMovementAndStrideLSDFlow = async (
         `Moving stTokens to elys from stride chain failed with error: ${error}, sending it to users wallet on stride chain`,
       );
     }
+    trace(`Liquid stake on stride successful, stToken: ${stakingResponse.stToken.denom}, amount: ${stakingResponse.stToken.amount}`);
+  
   } else {
+    trace('Redeeming stTokens from Elys to Stride');
     const hostToAgoricChannel = stDenomOnElysTohostToAgoricChannelMap.get(
       tx.denom,
     );
+    trace(`hostToAgoricChannel for ${tx.denom} is ${hostToAgoricChannel}`);
 
     const hostChain = supportedHostChains.get(hostToAgoricChannel);
 
+    trace(
+      `hostChain for ${tx.denom} is ${hostChain.hostICAAccountAddress.chainId}`,
+    );
     let incomingStTokenAmount;
     try {
       incomingStTokenAmount = BigInt(tx.amount);
@@ -379,7 +454,8 @@ export const tokenMovementAndStrideLSDFlow = async (
       return;
     }
 
-    const ibcDenomOnAgoricFromElys = `ibc/${denomHash({ denom: `${tx.denom}`, channelId: AgoricToElysChannel })}`;
+    trace(AgoricToElysChannel);
+    const ibcDenomOnAgoricFromElys = `ibc/${denomHash({ denom: tx.denom, channelId: AgoricToElysChannel })}`;
     trace(`LiquidStakeRedeem: Received ${tx.denom}`);
     trace(`LiquidStakeRedeem: Moving ${ibcDenomOnAgoricFromElys} to elys ICA`);
 
@@ -418,7 +494,7 @@ export const tokenMovementAndStrideLSDFlow = async (
     // Transfer to stride from elys ICA
     try {
       await elysICAAccount.transfer(strideICAAddress, {
-        denom: tx.denom,
+        denom: `ibc/${denomHashFromPath(tx.denom)}`,
         value: amountAfterFeeDeduction,
       });
     } catch (error) {
@@ -444,7 +520,7 @@ export const tokenMovementAndStrideLSDFlow = async (
       await redeemOnStride(
         strideICAAccount,
         strideICAAddress,
-        tx.amount,
+        `${amountAfterFeeDeduction}`,
         hostChain.hostICAAccountAddress.chainId,
         senderNativeAddress,
       );
@@ -457,6 +533,9 @@ export const tokenMovementAndStrideLSDFlow = async (
         `Unstaking on stride failed with error: ${error}, sending it to users wallet on stride chain`,
       );
     }
+    trace(
+      `Redeem on stride successful, stToken: st${hostChain.nativeDenom}, amount: ${tx.amount}`,
+    );
   }
 };
 harden(tokenMovementAndStrideLSDFlow);
@@ -489,6 +568,9 @@ const handleTransferFailure = async (
 
   try {
     await account.send(address, { denom, value: amount });
+    trace(
+      `Sent tokens to ${address.value}, denom: ${denom}, amount: ${amount}`,
+    );
   } catch (error) {
     trace(
       `Failed to send tokens to ${address.value}, denom: ${denom}, amount: ${amount}`,
@@ -534,15 +616,48 @@ const liquidStakeOnStride = async (
   amount,
   denom,
 ) => {
+  // amount = 1000n;
+  // denom = 'utia';
+
+  trace('Calling liquid stake with parameters:');
+  trace(
+    '++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++strideICAAddress: ',
+    strideICAAddress.value,
+  );
+  trace('amount: ', amount.toString());
+  trace('denom: ', denom);
+
   const strideLiquidStakeMsg = Any.toJSON(
     MsgLiquidStake.toProtoMsg({
-      creator: strideICAAddress.value,
-      amount: amount.toString(),
-      hostDenom: denom,
+      staker: strideICAAddress.value,
+      nativeAmount: amount.toString(),
+      // hostDenom: denom,
     }),
   );
 
   trace('Calling liquid stake');
+
+  /** Last error, if we run out of retries */
+  let lastErr;
+
+  for (let attempt = 1; attempt <= 20; attempt += 1) {
+    try {
+      trace(`Liquid-stake attempt ${attempt}/20`);
+      const resp = await strideICAAccount.executeEncodedTx([
+        strideLiquidStakeMsg,
+      ]);
+      trace('Liquid stake response: ', resp);
+      return harden(
+        tryDecodeResponse(resp, MsgLiquidStakeResponse.fromProtoMsg),
+      );
+    } catch (err) {
+      trace(`Attempt ${attempt} failed:`, err);
+      lastErr = err;
+    }
+  }
+  // All retries exhausted
+  throw Fail`Liquid stake failed after 200 attempts: ${lastErr}`;
+
   const stakingResponse = await strideICAAccount.executeEncodedTx([
     strideLiquidStakeMsg,
   ]);
@@ -585,11 +700,17 @@ const redeemOnStride = async (
   hostZone,
   receiver,
 ) => {
+  trace('Redeeming stake on stride');
+  trace('strideICAAddress: ', strideICAAddress.value);
+  trace('amount: ', amount);
+  trace('hostZone: ', hostZone);
+  trace('receiver: ', receiver);
+
   const strideRedeemStakeMsg = Any.toJSON(
     MsgRedeemStake.toProtoMsg({
-      creator: strideICAAddress.value,
-      amount,
-      hostZone,
+      redeemer: strideICAAddress.value,
+      stTokenAmount: amount,
+      // hostZone,
       receiver,
     }),
   );
@@ -597,7 +718,8 @@ const redeemOnStride = async (
   // https://github.com/Agoric/agoric-sdk/wiki/No-Nested-Await
   await null;
 
-  await strideICAAccount.executeEncodedTx([strideRedeemStakeMsg]);
+  const redeemResponse = await strideICAAccount.executeEncodedTx([strideRedeemStakeMsg]);
+  trace(`Redeem stake on stride executed successfully ${redeemResponse}`);
 };
 harden(redeemOnStride);
 
@@ -647,14 +769,14 @@ const deductedFeeAmount = async (
   return harden(finalAmount);
 };
 
-
 /**
  * Splits a string into two halves at the first occurrence of '1'.
+ *
  * @param {string} input
  * @returns {Bech32Address}
  */
 const convertToBech32Address = input => {
   const index = input.indexOf('1');
-  return `${input.slice(0, index)}1${input.slice(index + 1)}` 
+  return `${input.slice(0, index)}1${input.slice(index + 1)}`;
 };
 harden(convertToBech32Address);
