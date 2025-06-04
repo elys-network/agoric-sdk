@@ -21,7 +21,7 @@ const parserOpts = {
 };
 
 import fetchedChainInfo from '@agoric/orchestration/src/fetched-chain-info.js';
-import {generateAssetListConfig} from '@agoric/orchestration/src/asset-list-elys.js';
+import { generateAssetListConfig } from '@agoric/orchestration/src/asset-list-elys.js';
 
 export const minimalChainInfos = {
   agoric: fetchedChainInfo.agoric,
@@ -34,7 +34,7 @@ export const minimalChainInfos = {
   celestia: fetchedChainInfo.celestia,
 };
 
-export const createFeeTestConfig = (feeCollector) => {
+export const createFeeTestConfig = feeCollector => {
   const feeConfig = {
     feeCollector,
     onBoardRate: {
@@ -74,25 +74,24 @@ export const defaultProposalBuilder = async (
 export default async (homeP, endowments) => {
   const { scriptArgs } = endowments;
 
-  const chainInfo = JSON.stringify(withChainCapabilities(minimalChainInfos))
-
+  const chainInfo = JSON.stringify(withChainCapabilities(minimalChainInfos));
   const parseChainInfo = () => {
     if (typeof chainInfo !== 'string') return undefined;
     return JSON.parse(chainInfo);
   };
   const parseAssetInfo = () => {
     const assetInfo = generateAssetListConfig(minimalChainInfos);
-    if (typeof assetInfo !== 'string') return undefined;
-    return JSON.parse(assetInfo);
+    const stringifiedAssetInfo = JSON.stringify(assetInfo);
+    return JSON.parse(stringifiedAssetInfo);
   };
   const feeConfig = createFeeTestConfig(
-      'agoric1a659t9fem9vpux6anq8877jh0dz6dtzj7g06r7',
-    );
-    const x = JSON.parse(
-      JSON.stringify(feeConfig, (key, value) =>
-        typeof value === 'bigint' ? value.toString() : value,
-      ),
-    )
+    'agoric1a659t9fem9vpux6anq8877jh0dz6dtzj7g06r7',
+  );
+  const x = JSON.parse(
+    JSON.stringify(feeConfig, (key, value) =>
+      typeof value === 'bigint' ? value.toString() : value,
+    ),
+  );
   const opts = harden({
     chainInfo: parseChainInfo(),
     assetInfo: parseAssetInfo(),

@@ -5,13 +5,13 @@
   "bundles": [
     {
       "entrypoint": "@agoric/orchestration/src/examples/elys.contract.js",
-      "bundleID": "b1-f4e52f81a80dd190888e5b3e318f47ca876f868408cae6fc48d4ebb3a4895c8daba57821a4d049500a86b69c3caa0ac9803bfa955bcc0b0070697f91ab13388f",
-      "fileName": "/home/adarsh/.agoric/cache/b1-f4e52f81a80dd190888e5b3e318f47ca876f868408cae6fc48d4ebb3a4895c8daba57821a4d049500a86b69c3caa0ac9803bfa955bcc0b0070697f91ab13388f.json"
+      "bundleID": "b1-fbd6c57baea93b439b5acc14061b68627003817b6f89285f02e0c824d2869df90774d151fe13fc2d3f8b2fd498ef0e3ec32ad67ada9f0dd34225ea38ef129d5a",
+      "fileName": "/home/adarsh/.agoric/cache/b1-fbd6c57baea93b439b5acc14061b68627003817b6f89285f02e0c824d2869df90774d151fe13fc2d3f8b2fd498ef0e3ec32ad67ada9f0dd34225ea38ef129d5a.json"
     },
     {
       "entrypoint": "@agoric/orchestration/src/proposals/start-elys.js",
-      "bundleID": "b1-60d5837e7ab5cffe54b09c44923623d4961191adf16e7a534cf70960b2ed904dec0e1596b77eed12cc836bc2db8490fe7b3c3a4f09d48a1aba106068ced2722e",
-      "fileName": "/home/adarsh/.agoric/cache/b1-60d5837e7ab5cffe54b09c44923623d4961191adf16e7a534cf70960b2ed904dec0e1596b77eed12cc836bc2db8490fe7b3c3a4f09d48a1aba106068ced2722e.json"
+      "bundleID": "b1-75a6dcf26c8e4bf91e992118f914294d91ec8ee62ada0b896a510c773edeb3b9b81105bbde177c374710eadbc43b501a91aa20f6749c1144960680f772eff16c",
+      "fileName": "/home/adarsh/.agoric/cache/b1-75a6dcf26c8e4bf91e992118f914294d91ec8ee62ada0b896a510c773edeb3b9b81105bbde177c374710eadbc43b501a91aa20f6749c1144960680f772eff16c.json"
     }
   ]
 }

@@ -1,43 +1,14 @@
 import crypto from 'crypto';
 import chainInfo from './fetched-chain-info.js';
 
-// Sample input data (replace this with the actual imported data)
-
-type ChainConfig = {
-  bech32Prefix: string;
-  chainId: string;
-  icqEnabled: boolean;
-  namespace: string;
-  reference: string;
-  stakingTokens: readonly { denom: string }[];
-  connections: Record<
-    string,
-    {
-      id: string;
-      client_id: string;
-      counterparty: { client_id: string; connection_id: string };
-      state: number;
-      transferChannel: {
-        channelId: string;
-        portId: string;
-        counterPartyChannelId: string;
-        counterPartyPortId: string;
-        ordering: number;
-        state: number;
-        version: string;
-      };
-    }
-  >;
-};
-
 // Utility function to compute SHA256 hash in uppercase
-const computeHash = (input: string): string => {
+const computeHash = (input) => {
   return crypto.createHash('sha256').update(input).digest('hex').toUpperCase();
 };
 
 // Main function to generate the configuration
-export const generateAssetListConfig = (chains: Record<string, ChainConfig>) => {
-  const result: [string, Record<string, string>][] = [];
+export const generateAssetListConfig = (chains) => {
+  const result = [];
 
   const agoricReference = chains['agoric']?.reference;
   const elysReference = chains['elys']?.reference;
@@ -65,7 +36,7 @@ export const generateAssetListConfig = (chains: Record<string, ChainConfig>) => 
     ]);
 
     if (chainName === 'elys' || chainName === 'agoric' || chainName === 'stride') {
-      continue
+      continue;
     }
 
     // Second entry, ibc denom from host chains
@@ -81,7 +52,6 @@ export const generateAssetListConfig = (chains: Record<string, ChainConfig>) => 
     ]);
 
     // Third entry, ibc denom of stToken from elys chain
-    
     const ibcDenomOfStTokenOnElysFromStride = computeHash(`transfer/${connectionDataFromStrideToElys.transferChannel.counterPartyChannelId}/st${stakingDenom}`);
     const ibcDenomOfStTokenOnAgoricFromElys = computeHash(`transfer/${connectionDataFromElysToAgoric.transferChannel.counterPartyChannelId}/transfer/${connectionDataFromStrideToElys.transferChannel.counterPartyChannelId}/st${stakingDenom}`);
     result.push([
@@ -93,14 +63,14 @@ export const generateAssetListConfig = (chains: Record<string, ChainConfig>) => 
       },
     ]);
   }
-
   return result;
 };
 
 // Generate the configuration
 // try {
 //   const config = generateAssetListConfig(chainInfo);
-//   console.log(JSON.stringify(config, null, 2));
+//   console.log(JSON.stringify(config));
+//   console.log(JSON.parse(JSON.stringify(config)));
 // } catch (error) {
 //   console.error('Error generating config:', error.message);
 // }
