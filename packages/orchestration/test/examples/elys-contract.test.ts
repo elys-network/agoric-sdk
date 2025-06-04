@@ -356,7 +356,7 @@ test('Failing case: Liquid stake on stride fails, user receives token at stride 
   );
   // Move uatom to users stride address response
   ibcBridge.addMockAck(
-    'eyJ0eXBlIjoxLCJkYXRhIjoiQ3FnQkNod3ZZMjl6Ylc5ekxtSmhibXN1ZGpGaVpYUmhNUzVOYzJkVFpXNWtFb2NCQ2d0amIzTnRiM014ZEdWemRCSXRjM1J5YVdSbE1UYzFZemQ0ZDJ4NU4yNTNlV05uYUhkM2R6ZzNlRGd6YURVMmRHUnJhbmg2TTNwMlozRndHa2tLUkdsaVl5OUNRekZFUTBNek5EbEZPRGhGUkRnME9FSTRNa0kxUWpnNU9VVkNSVVZEUlVJM1FqVTNRemd4TnpWQk1qWTFNRVkzT1RneU5UZzFNREl5TmprMFFVRTBFZ0U0IiwibWVtbyI6IiJ9',
+    'eyJ0eXBlIjoxLCJkYXRhIjoiQ3FnQkNod3ZZMjl6Ylc5ekxtSmhibXN1ZGpGaVpYUmhNUzVOYzJkVFpXNWtFb2NCQ2d0amIzTnRiM014ZEdWemRCSXRjM1J5YVdSbE1UYzFZemQ0ZDJ4NU4yNTNlV05uYUhkM2R6ZzNlRGd6YURVMmRHUnJhbmg2TTNwMlozRndHa2tLUkdsaVl5OHlOek01TkVaQ01Ea3lSREpGUTBORU5UWXhNak5ETnpSR016WkZORU14UmpreU5qQXdNVU5GUVVSQk9VTkJPVGRGUVRZeU1rSXlOVVkwTVVVMVJVSXlFZ0U0IiwibWVtbyI6IiJ9',
     buildMsgResponseString(MsgSendResponse, { sequence: 1n }),
   );
 
@@ -393,7 +393,7 @@ test('Failing case: Liquid stake on stride fails, user receives token at stride 
     blockTime: 1712180320,
     event: 'acknowledgementPacket',
     packet: {
-      data: 'eyJ0eXBlIjoxLCJkYXRhIjoiQ3FnQkNod3ZZMjl6Ylc5ekxtSmhibXN1ZGpGaVpYUmhNUzVOYzJkVFpXNWtFb2NCQ2d0amIzTnRiM014ZEdWemRCSXRjM1J5YVdSbE1UYzFZemQ0ZDJ4NU4yNTNlV05uYUhkM2R6ZzNlRGd6YURVMmRHUnJhbmg2TTNwMlozRndHa2tLUkdsaVl5OUNRekZFUTBNek5EbEZPRGhGUkRnME9FSTRNa0kxUWpnNU9VVkNSVVZEUlVJM1FqVTNRemd4TnpWQk1qWTFNRVkzT1RneU5UZzFNREl5TmprMFFVRTBFZ0U0IiwibWVtbyI6IiJ9',
+      data: 'eyJ0eXBlIjoxLCJkYXRhIjoiQ3FnQkNod3ZZMjl6Ylc5ekxtSmhibXN1ZGpGaVpYUmhNUzVOYzJkVFpXNWtFb2NCQ2d0amIzTnRiM014ZEdWemRCSXRjM1J5YVdSbE1UYzFZemQ0ZDJ4NU4yNTNlV05uYUhkM2R6ZzNlRGd6YURVMmRHUnJhbmg2TTNwMlozRndHa2tLUkdsaVl5OHlOek01TkVaQ01Ea3lSREpGUTBORU5UWXhNak5ETnpSR016WkZORU14UmpreU5qQXdNVU5GUVVSQk9VTkJPVGRGUVRZeU1rSXlOVVkwTVVVMVJVSXlFZ0U0IiwibWVtbyI6IiJ9',
       destination_channel: 'channel-0',
       destination_port: 'icahost',
       sequence: '2',
@@ -775,7 +775,7 @@ test('Happy Return Flow: input stAtom at agoric receives atom on cosmoshub', asy
       {
         amount: '10',
         denom:
-          'ibc/92287A0B6A572CDB384B6CD0FE396DFE23F5C2E02801E9562659DACCFD74941E',
+          'transfer/channel-998/stuatom'
       },
       'channel-12696',
       'elys175c7xwly7nwycghwww87x83h56tdkjxzjf4ne0',
@@ -801,11 +801,11 @@ test('Happy Return Flow: input stAtom at agoric receives atom on cosmoshub', asy
   );
 
   ibcBridge.addMockAck(
-    'eyJ0eXBlIjoxLCJkYXRhIjoiQ3JRQkNpa3ZhV0pqTG1Gd2NHeHBZMkYwYVc5dWN5NTBjbUZ1YzJabGNpNTJNUzVOYzJkVWNtRnVjMlpsY2hLR0FRb0lkSEpoYm5ObVpYSVNDMk5vWVc1dVpXd3RPVGs0R2trS1JHbGlZeTg1TWpJNE4wRXdRalpCTlRjeVEwUkNNemcwUWpaRFJEQkdSVE01TmtSR1JUSXpSalZETWtVd01qZ3dNVVU1TlRZeU5qVTVSRUZEUTBaRU56UTVOREZGRWdFNUlneGpiM050YjNNeGRHVnpkREVxQzJOdmMyMXZjekYwWlhOME1nQTRnUENTeTkwSSIsIm1lbW8iOiIifQ==',
+    'eyJ0eXBlIjoxLCJkYXRhIjoiQ3JRQkNpa3ZhV0pqTG1Gd2NHeHBZMkYwYVc5dWN5NTBjbUZ1YzJabGNpNTJNUzVOYzJkVWNtRnVjMlpsY2hLR0FRb0lkSEpoYm5ObVpYSVNDMk5vWVc1dVpXd3RPVGs0R2trS1JHbGlZeTgwTjBNME56WXhRVEkzUVRZMFF6Z3hPRVF4UXprM00wRTFNemcyTlRNeE5EQXdSamxGUWtJMFF6aEZNemxFTkRKQ01rTXdORVJHTXpneVJqSTRPREV5RWdFNUlneGpiM050YjNNeGRHVnpkREVxQzJOdmMyMXZjekYwWlhOME1nQTRnUENTeTkwSSIsIm1lbW8iOiIifQ==',
     buildMsgResponseString(MsgTransferResponse, { sequence: 1n }),
   );
   ibcBridge.addMockAck(
-    'eyJ0eXBlIjoxLCJkYXRhIjoiQ21rS0h5OXpkSEpwWkdVdWMzUmhhMlZwWW1NdVRYTm5VbVZrWldWdFUzUmhhMlVTUmdvTFkyOXpiVzl6TVhSbGMzUVNBakV3R2dabGJIbHpMVEVpSzJWc2VYTXhOelZqTjNoM2JIazNibmQ1WTJkb2QzZDNPRGQ0T0ROb05UWjBaR3RxZUhwcVpqUnVaVEE9IiwibWVtbyI6IiJ9',
+    'eyJ0eXBlIjoxLCJkYXRhIjoiQ204S0h5OXpkSEpwWkdVdWMzUmhhMlZwWW1NdVRYTm5VbVZrWldWdFUzUmhhMlVTVEFvTFkyOXpiVzl6TVhSbGMzUVNBVGthQzJOdmMyMXZjMmgxWWkwMElpMWpiM050YjNNeE56VmpOM2gzYkhrM2JuZDVZMmRvZDNkM09EZDRPRE5vTlRaMFpHdHFlSHBxWm5ZMU5XUT0iLCJtZW1vIjoiIn0=',
     buildMsgResponseString(MsgRedeemStake, {
       creator: 'cosmos1test',
       amount: '10',
@@ -825,7 +825,7 @@ test('Happy Return Flow: input stAtom at agoric receives atom on cosmoshub', asy
     blockTime: 1712180320,
     event: 'acknowledgementPacket',
     packet: {
-      data: 'eyJ0eXBlIjoxLCJkYXRhIjoiQ3JRQkNpa3ZhV0pqTG1Gd2NHeHBZMkYwYVc5dWN5NTBjbUZ1YzJabGNpNTJNUzVOYzJkVWNtRnVjMlpsY2hLR0FRb0lkSEpoYm5ObVpYSVNDMk5vWVc1dVpXd3RPVGs0R2trS1JHbGlZeTg1TWpJNE4wRXdRalpCTlRjeVEwUkNNemcwUWpaRFJEQkdSVE01TmtSR1JUSXpSalZETWtVd01qZ3dNVVU1TlRZeU5qVTVSRUZEUTBaRU56UTVOREZGRWdFNUlneGpiM050YjNNeGRHVnpkREVxQzJOdmMyMXZjekYwWlhOME1nQTRnUENTeTkwSSIsIm1lbW8iOiIifQ==',
+      data: 'eyJ0eXBlIjoxLCJkYXRhIjoiQ3JRQkNpa3ZhV0pqTG1Gd2NHeHBZMkYwYVc5dWN5NTBjbUZ1YzJabGNpNTJNUzVOYzJkVWNtRnVjMlpsY2hLR0FRb0lkSEpoYm5ObVpYSVNDMk5vWVc1dVpXd3RPVGs0R2trS1JHbGlZeTgwTjBNME56WXhRVEkzUVRZMFF6Z3hPRVF4UXprM00wRTFNemcyTlRNeE5EQXdSamxGUWtJMFF6aEZNemxFTkRKQ01rTXdORVJHTXpneVJqSTRPREV5RWdFNUlneGpiM050YjNNeGRHVnpkREVxQzJOdmMyMXZjekYwWlhOME1nQTRnUENTeTkwSSIsIm1lbW8iOiIifQ==',
       destination_channel: 'channel-0',
       destination_port: 'icahost',
       sequence: '0',
@@ -844,7 +844,7 @@ test('Happy Return Flow: input stAtom at agoric receives atom on cosmoshub', asy
     blockTime: 1712180320,
     event: 'acknowledgementPacket',
     packet: {
-      data: 'eyJ0eXBlIjoxLCJkYXRhIjoiQ21rS0h5OXpkSEpwWkdVdWMzUmhhMlZwWW1NdVRYTm5VbVZrWldWdFUzUmhhMlVTUmdvTFkyOXpiVzl6TVhSbGMzUVNBakV3R2dabGJIbHpMVEVpSzJWc2VYTXhOelZqTjNoM2JIazNibmQ1WTJkb2QzZDNPRGQ0T0ROb05UWjBaR3RxZUhwcVpqUnVaVEE9IiwibWVtbyI6IiJ9',
+      data: 'eyJ0eXBlIjoxLCJkYXRhIjoiQ204S0h5OXpkSEpwWkdVdWMzUmhhMlZwWW1NdVRYTm5VbVZrWldWdFUzUmhhMlVTVEFvTFkyOXpiVzl6TVhSbGMzUVNBVGthQzJOdmMyMXZjMmgxWWkwMElpMWpiM050YjNNeE56VmpOM2gzYkhrM2JuZDVZMmRvZDNkM09EZDRPRE5vTlRaMFpHdHFlSHBxWm5ZMU5XUT0iLCJtZW1vIjoiIn0=',
       destination_channel: 'channel-0',
       destination_port: 'icahost',
       sequence: '1',

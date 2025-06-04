@@ -27,9 +27,9 @@ import type { ExecutionContext } from 'ava';
 import { withChainCapabilities } from '../src/chain-capabilities.js';
 import { registerKnownChains } from '../src/chain-info.js';
 import type { Bech32Address } from '../src/cosmos-api.js';
-import { makeChainHub } from '../src/exos/chain-hub.js';
+import { makeChainHub, type DenomDetail } from '../src/exos/chain-hub.js';
 import { prepareCosmosInterchainService } from '../src/exos/cosmos-interchain-service.js';
-import fetchedChainInfo from '../src/fetched-chain-info.js';
+import fetchedChainInfo from '../src/test-chain-info.js';
 import { assetOn } from '../src/utils/asset.js';
 import { registerChainsAndAssets } from '../src/utils/chain-hub-helper.js';
 import { buildVTransferEvent } from '../tools/ibc-mocks.js';
@@ -232,6 +232,14 @@ export const commonSetup = async (t: ExecutionContext<any>) => {
     assetOn('uatom', 'cosmoshub', undefined, 'agoric', chainInfoWithCaps),
     assetOn('uusdc', 'noble', undefined, 'dydx', chainInfoWithCaps),
     assetOn('ibc/92287A0B6A572CDB384B6CD0FE396DFE23F5C2E02801E9562659DACCFD74941E', 'elys', undefined, 'agoric', chainInfoWithCaps),
+    harden([
+      "ibc/B47956B941056D3B156C101ADC4B19652AF0F3C68FA8AE447466E08E63961A69",
+      harden({
+        baseName: "elys",
+        chainName: "agoric",
+        baseDenom: "47C4761A27A64C818D1C973A5386531400F9EBB4C8E39D42B2C04DF382F28812",
+      }),
+    ] as [string, DenomDetail & { brandKey?: string }]),
   ]);
 
   /**
